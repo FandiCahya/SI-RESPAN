@@ -33,7 +33,11 @@
                 <div class="d-grid mt-4">
                     <button type="submit" class="btn btn-primary">Login</button>
                 </div>
-            </form>
+                
+                <div class="text-center mt-3">
+                    <a href="{% url 'password_reset' %}" class="text-decoration-none">Lupa Password?</a>
+                </div>
+                </form>
         </div>
     </div>
 </div>
@@ -41,17 +45,16 @@
 
 {% block scripts %}
 <script>
+    // Script Anda untuk toggle password tetap sama, tidak perlu diubah.
     document.addEventListener('DOMContentLoaded', function () {
         const togglePasswordBtn = document.querySelector('#togglePasswordBtn');
         const togglePasswordIcon = document.querySelector('#togglePasswordIcon');
         const passwordInput = document.querySelector('#id_password');
 
         togglePasswordBtn.addEventListener('click', function () {
-            // Ubah tipe input
             const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
             passwordInput.setAttribute('type', type);
             
-            // Ubah kelas ikon
             togglePasswordIcon.classList.toggle('fa-eye');
             togglePasswordIcon.classList.toggle('fa-eye-slash');
         });

@@ -9,22 +9,14 @@ from . import logic
 import json
 from django.utils import timezone
 from collections import defaultdict
+from django.shortcuts import render, redirect
+from django.contrib import messages
+from django.contrib.auth.decorators import login_required
+from .forms import UserUpdateForm
 
 @login_required
 def halaman_utama(request):
-    # user = request.user
-    # if user.groups.filter(name='admin_data').exists() or user.is_superuser:
-    #     return render(request, 'analisis/halaman_admin.html', {'is_admin': True})
-    # elif user.groups.filter(name='enumerator').exists():
-    #     return render(request, 'analisis/halaman_pengguna.html', {'is_admin': False})
-    # else:
-    #     return HttpResponse("Otentikasi berhasil, tetapi Anda belum memiliki role.")
     return render(request, 'analisis/halaman_utama.html')
-
-@login_required
-def profile_view(request):
-    # Untuk sekarang, hanya tampilkan template kosong
-    return render(request, 'analisis/profile.html')
 
 @login_required
 def clustering_view(request):
@@ -319,3 +311,21 @@ def maps_view(request):
         'daftar_komoditas': daftar_komoditas_unik
     }
     return render(request, 'analisis/maps.html', context)
+
+@login_required
+def profile_view(request):
+    # Logika untuk memproses form edit saat disubmit
+    if request.method == 'POST':
+        form = UserUpdateForm(request.POST, instance=request.user)
+        if form.is_valid():
+            form.save()
+            messages.success(request, f'Profil Anda berhasil diperbarui!')
+            return redirect('profile') # Ganti 'profile' dengan nama URL halaman profil Anda
+    else:
+        # Menampilkan form dengan data yang sudah ada saat halaman diakses
+        form = UserUpdateForm(instance=request.user)
+    
+    context = {
+        'form': form
+    }
+    return render(request, 'analisis/profile.html', context)

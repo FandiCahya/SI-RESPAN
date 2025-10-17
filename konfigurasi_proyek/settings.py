@@ -161,3 +161,21 @@ STATIC_URL = 'static/'
 STATICFILES_DIRS = [
     BASE_DIR / 'static',
 ]
+
+# Testing
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+
+# # Production
+# EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+# EMAIL_HOST = 'smtp.gmail.com'
+# EMAIL_PORT = 587
+# EMAIL_USE_TLS = True
+# EMAIL_HOST_USER = 'emailanda@gmail.com'  # <-- Ganti dengan email Anda
+# EMAIL_HOST_PASSWORD = 'host anda'
+
+# tutor untuk dapat host password
+# 1. Aktifkan Verifikasi 2 Langkah di Akun Google Anda.
+# 2. Buka halaman Sandi Aplikasi.
+# 3. Buat sandi baru untuk aplikasi (beri nama "Django Project" atau semacamnya).
+# 4. Google akan memberi Anda 16 karakter password. Salin password ini.
+# 5. Gunakan password 16 karakter tersebut di settings.py Anda untuk EMAIL_HOST_PASSWORD.

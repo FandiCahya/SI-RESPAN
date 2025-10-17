@@ -2,62 +2,41 @@
 {% load static %} 
 
 {% block content %}
-
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
-
 <style>
-    /* CSS Kustom untuk menyesuaikan tampilan */
-    body {
-        background-color: #f8f9fa; /* Warna latar belakang halaman */
-    }
-    .profile-card {
-        border: none;
-        border-radius: 1rem;
-        box-shadow: 0 0.5rem 1rem 0 rgba(0, 0, 0, 0.1);
-        background-color: white;
-    }
-    .profile-card-header {
-        background-color: white;
-        border-bottom: 1px solid #eee;
-        padding: 1.5rem;
-        border-top-left-radius: 1rem;
-        border-top-right-radius: 1rem;
-    }
-    .edit-btn {
-        background-color: #eef2f7;
-        border: none;
-        border-radius: 0.5rem;
-        color: #5a6a85;
-        font-weight: 500;
-        padding: 0.5rem 1rem;
-    }
-    .edit-btn:hover {
-        background-color: #dfe6ef;
-        color: #333;
-    }
-    .info-label {
-        color: #888;
-        font-size: 0.85rem;
-        margin-bottom: 0.25rem;
-        text-transform: uppercase;
-        font-weight: 600;
-    }
-    .info-value {
-        font-weight: 500;
-        color: #333;
-        font-size: 1.1rem;
-    }
+    /* (CSS Anda yang sebelumnya tetap di sini, tidak perlu diubah) */
+    body { background-color: #f8f9fa; }
+    .profile-card { border: none; border-radius: 1rem; box-shadow: 0 0.5rem 1rem 0 rgba(0, 0, 0, 0.1); background-color: white; }
+    .profile-card-header { background-color: white; border-bottom: 1px solid #eee; padding: 1.5rem; border-top-left-radius: 1rem; border-top-right-radius: 1rem; }
+    .edit-btn { background-color: #eef2f7; border: none; border-radius: 0.5rem; color: #5a6a85; font-weight: 500; padding: 0.5rem 1rem; }
+    .edit-btn:hover { background-color: #dfe6ef; color: #333; }
+    .info-label { color: #888; font-size: 0.85rem; margin-bottom: 0.25rem; text-transform: uppercase; font-weight: 600; }
+    .info-value { font-weight: 500; color: #333; font-size: 1.1rem; }
 </style>
 
 <div class="container-fluid py-4">
     <h4 class="mb-4 fw-bold">Profile Saya</h4>
+    
+    {% if messages %}
+        {% for message in messages %}
+            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                {{ message }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        {% endfor %}
+    {% endif %}
 
     <div class="card profile-card">
         <div class="card-header profile-card-header d-flex justify-content-between align-items-center">
             <h5 class="mb-0 fw-bold">Informasi Akun</h5>
-            {% comment %} <a href="#" class="btn edit-btn">
-                <i class="bi bi-pencil me-1"></i> Edit
-            </a> {% endcomment %}
+            <div>
+                <button type="button" class="btn edit-btn" data-bs-toggle="modal" data-bs-target="#editProfileModal">
+                    <i class="bi bi-pencil me-1"></i> Edit Profil
+                </button>
+                <a href="{% url 'password_change' %}" class="btn btn-secondary">
+                    <i class="bi bi-key me-1"></i> Ubah Password
+                </a>
+            </div>
         </div>
         <div class="card-body p-4">
             <div class="row">
@@ -74,4 +53,31 @@
     </div>
 </div>
 
+<div class="modal fade" id="editProfileModal" tabindex="-1" aria-labelledby="editProfileModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="editProfileModalLabel">Edit Informasi Akun</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form method="POST" action="{% url 'edit_profile' %}">
+                    {% csrf_token %}
+                    <div class="mb-3">
+                        <label for="id_username" class="form-label">Username</label>
+                        {{ form.username }}
+                    </div>
+                    <div class="mb-3">
+                        <label for="id_email" class="form-label">Email</label>
+                        {{ form.email }}
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+                        <button type="submit" class="btn btn-primary">Simpan Perubahan</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
 {% endblock %}
