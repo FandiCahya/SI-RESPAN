@@ -1,0 +1,69 @@
+{% extends "base_dashboard.html" %}
+{% load static %}
+
+{% block content %}
+
+{# --- Bagian 1: Pesan Selamat Datang yang Disesuaikan Berdasarkan Role --- #}
+{# Jumbotron ini akan menampilkan pesan dan tombol yang berbeda untuk Admin dan Enumerator #}
+<div class="p-5 mb-4 bg-light rounded-3 shadow-sm">
+    <div class="container-fluid py-3">
+        {% if is_admin %}
+            <h1 class="display-5 fw-bold">Selamat Datang, Admin!</h1>
+            <p class="fs-5">Anda memiliki akses penuh untuk mengelola data, menjalankan analisis, dan memvisualisasikan hasil.</p>
+            <a href="{% url 'clustering' %}" class="btn btn-primary btn-lg mt-3">
+                <i class="fas fa-cogs me-2"></i>Mulai Proses Data
+            </a>
+        {% else %}
+            <h1 class="display-5 fw-bold">Selamat Datang!</h1>
+            <p class="fs-5">Anda dapat memantau hasil analisis dan persebaran data responden melalui peta interaktif.</p>
+            <a href="{% url 'maps' %}" class="btn btn-success btn-lg mt-3">
+                <i class="fas fa-map-location-dot me-2"></i>Lihat Peta Persebaran
+            </a>
+        {% endif %}
+    </div>
+</div>
+
+
+{# --- Bagian 2: Deskripsi Aplikasi (Tampil untuk Semua User) --- #}
+{# Card ini berisi informasi umum tentang aplikasi dan tidak perlu diulang-ulang. #}
+<div class="card shadow-sm mt-4">
+    <div class="card-header">
+        <h4 class="mb-0">Tentang Aplikasi</h4>
+    </div>
+    <div class="card-body">
+        <p class="card-text">Aplikasi Penentuan Responden Survei Harga Pangan dirancang untuk menyederhanakan proses pengumpulan dan analisis data harga pangan strategis.</p>
+        
+        <ul class="list-group list-group-flush mt-3">
+            <li class="list-group-item d-flex align-items-start">
+                <i class="fas fa-file-excel fa-2x text-success me-3 mt-1"></i>
+                <div>
+                    <h6 class="fw-bold">Import Data Fleksibel</h6>
+                    Memungkinkan admin mengunggah data harga dari file .xlsx dengan format yang dinamis.
+                </div>
+            </li>
+            <li class="list-group-item d-flex align-items-start">
+                <i class="fas fa-calculator fa-2x text-primary me-3 mt-1"></i>
+                <div>
+                    <h6 class="fw-bold">Analisis Otomatis</h6>
+                    Menjalankan K-Means Clustering dan SRS untuk menentukan responden, serta menghitung statistik penting.
+                </div>
+            </li>
+            <li class="list-group-item d-flex align-items-start">
+                <i class="fas fa-map-marked-alt fa-2x text-info me-3 mt-1"></i>
+                <div>
+                    <h6 class="fw-bold">Visualisasi Peta</h6>
+                    Menampilkan lokasi responden terpilih di peta interaktif dengan fitur filter per komoditas.
+                </div>
+            </li>
+            <li class="list-group-item d-flex align-items-start">
+                <i class="fas fa-users-cog fa-2x text-secondary me-3 mt-1"></i>
+                <div>
+                    <h6 class="fw-bold">Manajemen Hak Akses</h6>
+                    Membedakan fitur yang dapat diakses oleh Admin dan Enumerator untuk keamanan data.
+                </div>
+            </li>
+        </ul>
+    </div>
+</div>
+
+{% endblock %}

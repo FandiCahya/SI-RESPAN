@@ -1,0 +1,60 @@
+{% extends "base_public.html" %}
+
+{% block content %}
+<div class="row justify-content-center align-items-center" style="min-height: 100vh;">
+    <div class="col-md-6 col-lg-5">
+        <div class="glass-container">
+            <h3 class="text-center mb-4">Login</h3>
+            <form method="post">
+                {% csrf_token %}
+
+                {% if form.errors %}
+                <div class="alert alert-danger" role="alert">
+                    Username atau password Anda salah. Coba lagi.
+                </div>
+                {% endif %}
+
+                <div class="mb-3">
+                    <label for="id_username" class="form-label">Username</label>
+                    <input type="text" name="username" class="form-control" id="id_username" required>
+                </div>
+
+                <div class="mb-3">
+                    <label for="id_password" class="form-label">Password</label>
+                    <div class="input-group">
+                        <input type="password" name="password" class="form-control" id="id_password" required>
+                        <button class="btn btn-outline-secondary" type="button" id="togglePasswordBtn"
+                            style="border: none; border-bottom: 1px solid rgba(255, 255, 255, 0.5); background: transparent;">
+                            <i class="fas fa-eye" id="togglePasswordIcon" style="color: white;"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="d-grid mt-4">
+                    <button type="submit" class="btn btn-primary">Login</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const togglePasswordBtn = document.querySelector('#togglePasswordBtn');
+        const togglePasswordIcon = document.querySelector('#togglePasswordIcon');
+        const passwordInput = document.querySelector('#id_password');
+
+        togglePasswordBtn.addEventListener('click', function () {
+            // Ubah tipe input
+            const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+            passwordInput.setAttribute('type', type);
+            
+            // Ubah kelas ikon
+            togglePasswordIcon.classList.toggle('fa-eye');
+            togglePasswordIcon.classList.toggle('fa-eye-slash');
+        });
+    });
+</script>
+{% endblock %}

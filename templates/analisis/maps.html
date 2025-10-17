@@ -1,0 +1,105 @@
+{% extends "base_dashboard.html" %}
+
+{% block styles %}
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.4.1/dist/MarkerCluster.css" />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.4.1/dist/MarkerCluster.Default.css" />
+{% endblock %}
+
+
+{% block content %}
+<h1 class="mb-4">Aplikasi Penentuan Responden Survei Harga Pangan</h1>
+
+<div class="card shadow-sm">
+    <div class="card-header">
+        <h5 class="mb-0">Filter Peta</h5>
+    </div>
+    <div class="card-body">
+        <div class="row">
+            <div class="col-md-4">
+                <label for="komoditasFilter" class="form-label">Filter berdasarkan Komoditas:</label>
+                <select class="form-select" id="komoditasFilter">
+                    <option value="semua" selected>Tampilkan Semua</option>
+                    {% for komoditas in daftar_komoditas %}
+                        <option value="{{ komoditas }}">{{ komoditas }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="card shadow-sm mt-4">
+    <div class="card-body">
+        <div id="map" style="height: 600px; width: 100%;"></div>
+    </div>
+</div>
+{% endblock %}
+
+
+{% block scripts %}
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script src="https://unpkg.com/leaflet.markercluster@1.4.1/dist/leaflet.markercluster.js"></script>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // 1. Inisialisasi Peta
+        const map = L.map('map').setView([-7.8256, 111.9611], 12); // Center di sekitar Kediri
+
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            maxZoom: 19,
+            attribution: '© OpenStreetMap contributors'
+        }).addTo(map);
+
+        // 2. Ambil data GeoJSON
+        const geojsonData = {{ geojson_data|safe }};
+
+        // Buat grup cluster
+        const markers = L.markerClusterGroup();
+
+        // Fungsi untuk membuat popup
+        function onEachFeature(feature, layer) {
+            if (feature.properties) {
+                const props = feature.properties;
+                const popupContent = `
+                    <b>${props.komoditas}</b><br>
+                    Pasar: ${props.pasar}<br>
+                    Pedagang: ${props.pedagang}<br>
+                    Harga: Rp ${props.harga.toLocaleString('id-ID')}
+                `;
+                layer.bindPopup(popupContent);
+            }
+        }
+
+        // Buat layer GeoJSON awal dan tambahkan ke cluster
+        let geojsonLayer = L.geoJSON(geojsonData, { onEachFeature: onEachFeature });
+        markers.addLayer(geojsonLayer);
+        map.addLayer(markers);
+
+        // 3. Logika untuk Filter
+        const filterSelect = document.getElementById('komoditasFilter');
+
+        filterSelect.addEventListener('change', function() {
+            const selectedKomoditas = this.value;
+
+            // Hapus semua layer di dalam cluster
+            markers.clearLayers();
+
+            // Filter data
+            const filteredData = {
+                type: 'FeatureCollection',
+                features: geojsonData.features.filter(feature => {
+                    if (selectedKomoditas === 'semua') {
+                        return true;
+                    }
+                    return feature.properties.komoditas === selectedKomoditas;
+                })
+            };
+
+            // Buat layer baru dan tambahkan ke cluster
+            geojsonLayer = L.geoJSON(filteredData, { onEachFeature: onEachFeature });
+            markers.addLayer(geojsonLayer);
+        });
+    });
+</script>
+{% endblock %}

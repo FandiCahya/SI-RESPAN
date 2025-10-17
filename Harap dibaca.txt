@@ -1,0 +1,112 @@
+# Aplikasi Analisis Data Komoditas
+
+Aplikasi web berbasis Django untuk melakukan import, analisis (K-Means, SRS, Statistik), dan visualisasi data harga komoditas pangan.
+
+---
+
+## Prasyarat
+
+Sebelum memulai, pastikan perangkat Anda sudah terinstal perangkat lunak berikut:
+
+1.  **Python** (Rekomendasi versi 3.12.6 ). Pastikan untuk mencentang "Add Python to PATH" saat instalasi.
+2.  **MySQL Server**. Cara termudah adalah dengan menginstal **XAMPP** atau **Laragon**. Aplikasi ini sudah termasuk Apache, MySQL, dan phpMyAdmin untuk mengelola database.
+
+---
+
+## Langkah-Langkah Instalasi
+
+Ikuti langkah-langkah berikut untuk menjalankan aplikasi secara lokal.
+
+### 1. Ekstrak Proyek & Buka Terminal
+- Ekstrak file `.zip` proyek ini ke lokasi yang Anda inginkan (misalnya: `C:\Projects\`).
+- Buka Terminal atau Command Prompt (CMD) dan navigasikan ke dalam folder proyek yang baru saja diekstrak.
+  ```bash
+  cd path/ke/folder/project_analisis
+
+2. Buat & Aktifkan Virtual Environment
+Jalankan perintah ini untuk membuat lingkungan Python yang terisolasi.
+python -m venv venv
+
+Aktifkan lingkungan tersebut.
+
+Untuk Windows:
+.\venv\Scripts\activate
+
+Untuk macOS/Linux:
+source venv/bin/activate
+
+Anda akan melihat (venv) di awal baris terminal Anda.
+
+3. Instal Semua Kebutuhan (Dependencies)
+Jalankan perintah berikut untuk menginstal semua library yang dibutuhkan dari file requirements.txt.
+pip install -r requirements.txt
+
+4. Konfigurasi Database MySQL
+Buka aplikasi XAMPP/Laragon Anda dan pastikan MySQL sudah berjalan.
+
+Buka phpMyAdmin (atau tool database lain) dan buat database baru yang kosong. Beri nama, misalnya, db_analisis_client.
+
+Buka file konfigurasi_proyek/settings.py di dalam proyek.
+
+Cari bagian DATABASES dan sesuaikan dengan konfigurasi database Anda.
+
+Contoh:
+
+Python
+
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'db_analisis_client',  # Nama database yang baru Anda buat
+        'USER': 'root',                 # User database Anda (biasanya 'root')
+        'PASSWORD': '',                 # Password database Anda (biasanya kosong di XAMPP)
+        'HOST': '127.0.0.1',
+        'PORT': '3306',
+    }
+}
+Simpan file settings.py.
+
+5. Jalankan Migrasi
+Kembali ke terminal, jalankan perintah ini untuk membuat semua tabel yang dibutuhkan di database Anda.
+python manage.py migrate
+
+6. Buat Akun Superuser (Admin Utama)
+Buat akun pertama untuk bisa login ke panel admin.
+python manage.py createsuperuser
+Ikuti instruksi untuk memasukkan username, email (opsional), dan password.
+
+7. Buat Grup User (WAJIB)
+Aplikasi ini menggunakan 2 role user. Anda harus membuatnya secara manual di panel admin.
+Jalankan server: python manage.py runserver
+
+Buka http://127.0.0.1:8000/admin/ di browser Anda.
+
+Login dengan akun superuser yang baru dibuat.
+
+Di sebelah kiri, cari "AUTHENTICATION AND AUTHORIZATION", lalu klik Groups.
+
+Klik "ADD GROUP". Buat grup dengan nama admin_data. Simpan.
+
+Klik "ADD GROUP" lagi. Buat grup dengan nama enumerator. Simpan.
+
+Menjalankan Aplikasi
+Pastikan Anda berada di direktori utama proyek dan virtual environment sudah aktif.
+
+Jalankan server pengembangan dengan perintah:
+
+python manage.py runserver
+
+Buka browser web Anda dan kunjungi alamat http://127.0.0.1:8000/.
+
+Cara Penggunaan Awal
+Login dengan akun superuser Anda.
+
+Untuk membuat user baru (misalnya, enumerator):
+
+Pergi ke panel admin (/admin/).
+
+Klik Users > Add user.
+
+Setelah user dibuat, klik username tersebut, scroll ke bawah ke bagian Permissions, dan masukkan user tersebut ke grup enumerator.
+
+Gunakan sidebar untuk navigasi ke fitur Clustering/Proses untuk mulai mengunggah dan menganalisis data.

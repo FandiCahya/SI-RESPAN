@@ -1,0 +1,62 @@
+/* static/css/style.css */
+
+/* Memberi background gelap agar efek kaca terlihat */
+body {
+    background-color: #2c3e50; /* Anda bisa ganti warnanya */
+}
+
+.glass-container {
+    background: rgba(255, 255, 255, 0.1); /* Latar belakang semi-transparan */
+    backdrop-filter: blur(10px); /* Efek blur */
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 15px;
+    padding: 2.5rem;
+    color: white; /* Warna teks di dalam kotak menjadi putih */
+}
+
+/* Mengubah tampilan input field */
+.glass-container .form-control {
+    background: transparent;
+    border: none;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.5);
+    border-radius: 0;
+    color: white !important; /* Tambahkan !important agar pasti diterapkan */
+}
+
+.glass-container .form-control:focus {
+    box-shadow: none;
+    border-bottom-color: white;
+}
+
+/* Mengubah tampilan label */
+.glass-container .form-label {
+    color: rgba(255, 255, 255, 0.8);
+}
+
+/* Mengubah tampilan tombol login */
+.glass-container .btn-primary {
+    background-color: white;
+    color: #333;
+    border-radius: 50px; /* Membuat tombol lebih bulat */
+    font-weight: 600;
+    border: none;
+    padding: 10px 0;
+}
+
+.glass-container .input-group .btn {
+    /* Memastikan tombol tidak punya border kiri */
+    border-left: none !important;
+    /* Menghilangkan bayangan biru saat tombol diklik */
+    box-shadow: none !important;
+}
+
+/* Memastikan warna ikon di dalam tombol adalah putih */
+.glass-container .input-group .btn i {
+    color: white;
+}
+
+.glass-container .input-group .form-control {
+    /* Memastikan input di dalam grup tidak punya border kanan */
+    border-right: none !important;
+}
+

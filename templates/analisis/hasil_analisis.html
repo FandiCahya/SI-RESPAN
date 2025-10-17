@@ -1,0 +1,164 @@
+{% extends "base_dashboard.html" %}
+
+{% block content %}
+<h1 class="mb-4">Aplikasi Penentuan Responden Survei Harga Pangan</h1>
+
+{% if hasil_list %}
+
+    <div class="card shadow-sm mb-4">
+        <div class="card-header">
+            <h5 class="mb-0">Hasil K-Means Clustering</h5>
+        </div>
+        <div class="card-body">
+            <ul class="nav nav-tabs" id="kmeansTab" role="tablist">
+                {% for hasil in hasil_list %}
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link {% if forloop.first %}active{% endif %}" id="tab-kmeans-{{ forloop.counter }}" data-bs-toggle="tab" data-bs-target="#content-kmeans-{{ forloop.counter }}" type="button" role="tab">{{ hasil.nama_komoditas }}</button>
+                    </li>
+                {% endfor %}
+            </ul>
+            <div class="tab-content p-3 border border-top-0">
+                {% for hasil in hasil_list %}
+                    <div class="tab-pane fade {% if forloop.first %}show active{% endif %}" id="content-kmeans-{{ forloop.counter }}" role="tabpanel">
+                        <div class="table-responsive" style="max-height: 400px; overflow-y: auto;">
+                            <table class="table table-sm table-striped">
+                                <thead>
+                                    <tr>
+                                        <th>Pasar</th>
+                                        <th>Pedagang</th>
+                                        <th>Harga</th>
+                                        <th>Klaster</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for item in hasil.data_klaster %}
+                                        <tr>
+                                            <td>{{ item.nama_pasar }}</td>
+                                            <td>{{ item.nama_pedagang }}</td>
+                                            <td>{{ item.harga }}</td>
+                                            <td><span class="badge bg-primary">Klaster {{ item.klaster }}</span></td>
+                                        </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+
+    <div class="card shadow-sm mb-4">
+        <div class="card-header">
+            <h5 class="mb-0">Sampel Representatif per Klaster K-Means</h5>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-bordered table-striped">
+                    <thead class="table-dark">
+                        <tr>
+                            <th rowspan="2" class="align-middle text-center">Komoditas</th>
+                            <th colspan="2" class="text-center">Klaster 1</th>
+                            <th colspan="2" class="text-center">Klaster 2</th>
+                            <th colspan="2" class="text-center">Klaster 3</th>
+                        </tr>
+                        <tr>
+                            <th>Nama Pedagang</th><th>Harga</th>
+                            <th>Nama Pedagang</th><th>Harga</th>
+                            <th>Nama Pedagang</th><th>Harga</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for baris in data_tabel_kmeans %}
+                            <tr>
+                                <td><strong>{{ baris.komoditas }}</strong></td>
+                                <td>{{ baris.sampel_klaster.0.pedagang }}</td><td>{{ baris.sampel_klaster.0.harga }}</td>
+                                <td>{{ baris.sampel_klaster.1.pedagang }}</td><td>{{ baris.sampel_klaster.1.harga }}</td>
+                                <td>{{ baris.sampel_klaster.2.pedagang }}</td><td>{{ baris.sampel_klaster.2.harga }}</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <div class="card shadow-sm mb-4">
+        <div class="card-header">
+            <h5 class="mb-0">Hasil Simple Random Sampling (SRS)</h5>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-bordered table-striped">
+                    <thead class="table-dark">
+                        <tr>
+                            <th rowspan="2" class="align-middle text-center">Komoditas</th>
+                            <th colspan="2" class="text-center">Pedagang 1</th>
+                            <th colspan="2" class="text-center">Pedagang 2</th>
+                            <th colspan="2" class="text-center">Pedagang 3</th>
+                        </tr>
+                        <tr>
+                            <th>Nama</th><th>Harga</th>
+                            <th>Nama</th><th>Harga</th>
+                            <th>Nama</th><th>Harga</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for baris in data_tabel_srs %}
+                            <tr>
+                                <td><strong>{{ baris.komoditas }}</strong></td>
+                                <td>{{ baris.sampel.0.pedagang }}</td><td>{{ baris.sampel.0.harga }}</td>
+                                <td>{{ baris.sampel.1.pedagang }}</td><td>{{ baris.sampel.1.harga }}</td>
+                                <td>{{ baris.sampel.2.pedagang }}</td><td>{{ baris.sampel.2.harga }}</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+<div class="card shadow-sm mb-4">
+    <div class="card-header">
+        <h5 class="mb-0">Rangkuman Statistik</h5>
+    </div>
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-bordered table-hover">
+                <thead class="table-dark">
+                    <tr>
+                        <th rowspan="2" class="align-middle text-center">Komoditas</th>
+                        <th colspan="2" class="text-center">Populasi (Data K-Means)</th>
+                        <th colspan="2" class="text-center">Sampel (Data SRS)</th>
+                    </tr>
+                    <tr>
+                        <th class="text-center">Std. Deviasi</th>
+                        <th class="text-center">Varians</th>
+                        <th class="text-center">Std. Deviasi</th>
+                        <th class="text-center">Varians</th>
+                        
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for hasil in hasil_list %}
+                    <tr>
+                        <td><strong>{{ hasil.nama_komoditas }}</strong></td>
+                        <td class="text-center">{{ hasil.standar_deviasi_populasi }}</td>
+                        <td class="text-center">{{ hasil.varians_populasi }}</td>
+                        <td class="text-center">{{ hasil.standar_deviasi_sampel }}</td>
+                        <td class="text-center">{{ hasil.varians_sampel }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+{% else %}
+    <div class="alert alert-info text-center">
+        Belum ada hasil analisis. Silakan jalankan proses di halaman <a href="{% url 'clustering' %}">Clustering</a>.
+    </div>
+{% endif %}
+
+{% endblock %}

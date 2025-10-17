@@ -1,0 +1,91 @@
+{% extends "base_dashboard.html" %}
+
+{% block content %}
+<h1 class="mb-4">Aplikasi Penentuan Responden Survei Harga Pangan</h1>
+
+<div class="card shadow-sm mb-4">
+    <div class="card-header">
+        <h5 class="mb-0">Import File</h5>
+    </div>
+    <div class="card-body">
+        <form method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            <div class="mb-3">
+                <label for="fileUpload" class="form-label">Pilih file Excel (.xlsx):</label>
+                <input class="form-control" type="file" name="file_excel" id="fileUpload" accept=".xlsx" required multiple>
+            </div>
+            <button type="submit" name="upload" class="btn btn-primary">
+                <i class="fas fa-upload me-2"></i>Import
+            </button>
+        </form>
+        {% if error %}
+            <div class="alert alert-danger mt-3">{{ error }}</div>
+        {% endif %}
+        {% if success_message %}
+             <div class="alert alert-success mt-3">{{ success_message }}</div>
+        {% endif %}
+    </div>
+</div>
+
+<div class="card shadow-sm">
+    <div class="card-header d-flex justify-content-between align-items-center">
+        <h5 class="mb-0">Data Komoditas</h5>
+        <form action="{% url 'proses_analisis' %}" method="post">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-success">
+                <i class="fas fa-cogs me-2"></i>Proses Semua Komoditas
+            </button>
+        </form>
+    </div>
+    <div class="card-body">
+        {% if grouped_data %}
+            <ul class="nav nav-tabs" id="komoditasTab" role="tablist">
+                {% for komoditas, data in grouped_data.items %}
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link {% if forloop.first %}active{% endif %}" id="tab-{{ forloop.counter }}" data-bs-toggle="tab" data-bs-target="#content-{{ forloop.counter }}" type="button" role="tab">{{ komoditas }}</button>
+                    </li>
+                {% endfor %}
+            </ul>
+            <div class="tab-content" id="komoditasTabContent">
+                {% for komoditas, data in grouped_data.items %}
+                    <div class="tab-pane fade {% if forloop.first %}show active{% endif %}" id="content-{{ forloop.counter }}" role="tabpanel">
+                        <div class="table-responsive mt-3">
+                            <table class="table table-striped table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>Tanggal</th>
+                                        <th>Pedagang</th>
+                                        <th>Pasar</th>
+                                        <th>Blok</th>
+                                        <th>No HP</th>
+                                        <th>Harga</th>
+                                        <th>Latitude</th>
+                                        <th>Longitude</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for item in data %}
+                                        <tr>
+                                            
+                                            <td>{{ item.tanggal }}</td>
+                                            <td>{{ item.nama_pedagang }}</td>
+                                            <td>{{ item.nama_pasar }}</td>
+                                            <td>{{ item.blok_pasar|default_if_none:"-" }}</td>
+                                            <td>{{ item.no_hp|default_if_none:"-" }}</td>
+                                            <td>{{ item.harga|default_if_none:"-" }}</td>
+                                            <td>{{ item.latitude|default_if_none:"-" }}</td>
+                                            <td>{{ item.longitude|default_if_none:"-" }}</td>
+                                        </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <p class="text-center">Belum ada data komoditas. Silakan import file terlebih dahulu.</p>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,14 @@
+/* static/css/dashboard.css */
+
+.sidebar {
+    width: 280px;
+    min-height: 100vh;
+}
+
+.content {
+    flex-grow: 1;
+}
+
+.nav-link.active {
+    background-color: #0d6efd !important;
+}
