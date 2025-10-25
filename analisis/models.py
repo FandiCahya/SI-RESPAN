@@ -29,3 +29,31 @@ class HasilAnalisis(models.Model):
 
     def __str__(self):
         return f"Hasil Analisis untuk {self.nama_komoditas}"
+    
+# === Model BARU untuk API Mobile ===
+
+# Model untuk Komoditas Pangan (Daftar Unik)
+class Komoditas(models.Model):
+    nama = models.CharField(max_length=100, unique=True, help_text="Contoh: Beras, Cabai, Daging Sapi")
+
+    def __str__(self):
+        return self.nama
+    
+    class Meta:
+        verbose_name_plural = "Komoditas"
+
+# Model untuk Pasar (Daftar Unik Pasar beserta koordinatnya)
+class Pasar(models.Model):
+    nama_pasar = models.CharField(max_length=255, unique=True)
+    alamat = models.TextField()
+    latitude = models.FloatField(help_text="Koordinat Latitude (contoh: -6.273105)")
+    longitude = models.FloatField(help_text="Koordinat Longitude (contoh: 106.865303)")
+    
+    # Relasi: Pasar ini menjual komoditas apa saja
+    komoditas = models.ManyToManyField(Komoditas, related_name='pasar_terkait')
+
+    def __str__(self):
+        return self.nama_pasar
+
+    class Meta:
+        verbose_name_plural = "Pasar"
