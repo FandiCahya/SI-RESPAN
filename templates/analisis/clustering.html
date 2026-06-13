@@ -18,24 +18,23 @@
                 <i class="fas fa-upload me-2"></i>Import
             </button>
         </form>
-        {% if error %}
-            <div class="alert alert-danger mt-3">{{ error }}</div>
-        {% endif %}
-        {% if success_message %}
-             <div class="alert alert-success mt-3">{{ success_message }}</div>
-        {% endif %}
     </div>
 </div>
 
 <div class="card shadow-sm">
     <div class="card-header d-flex justify-content-between align-items-center">
         <h5 class="mb-0">Data Komoditas</h5>
-        <form action="{% url 'proses_analisis' %}" method="post">
-            {% csrf_token %}
-            <button type="submit" class="btn btn-success">
-                <i class="fas fa-cogs me-2"></i>Proses Semua Komoditas
+        <div class="d-flex gap-2">
+            <button type="button" class="btn btn-danger" id="btnHapusSemua">
+                <i class="fas fa-trash-alt me-2"></i>Hapus Semua Data
             </button>
-        </form>
+            <form action="{% url 'proses_analisis' %}" method="post" id="formProses">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-success">
+                    <i class="fas fa-cogs me-2"></i>Proses Semua Komoditas
+                </button>
+            </form>
+        </div>
     </div>
     <div class="card-body">
         {% if grouped_data %}
@@ -49,7 +48,14 @@
             <div class="tab-content" id="komoditasTabContent">
                 {% for komoditas, data in grouped_data.items %}
                     <div class="tab-pane fade {% if forloop.first %}show active{% endif %}" id="content-{{ forloop.counter }}" role="tabpanel">
-                        <div class="table-responsive mt-3">
+                        <div class="d-flex justify-content-end mt-3 mb-2">
+                            <button type="button" class="btn btn-sm btn-outline-danger btn-hapus-komoditas"
+                                data-komoditas="{{ komoditas }}"
+                                data-url="{% url 'hapus_komoditas' komoditas %}">
+                                <i class="fas fa-trash me-1"></i>Hapus Data "{{ komoditas }}"
+                            </button>
+                        </div>
+                        <div class="table-responsive">
                             <table class="table table-striped table-hover">
                                 <thead>
                                     <tr>
@@ -66,7 +72,6 @@
                                 <tbody>
                                     {% for item in data %}
                                         <tr>
-                                            
                                             <td>{{ item.tanggal }}</td>
                                             <td>{{ item.nama_pedagang }}</td>
                                             <td>{{ item.nama_pasar }}</td>
@@ -88,4 +93,88 @@
         {% endif %}
     </div>
 </div>
+
+{# Hidden form untuk hapus semua data #}
+<form action="{% url 'hapus_semua_data' %}" method="post" id="formHapusSemua" style="display:none;">
+    {% csrf_token %}
+</form>
+
+{# Hidden form untuk hapus per komoditas #}
+<form method="post" id="formHapusKomoditas" style="display:none;">
+    {% csrf_token %}
+</form>
+{% endblock %}
+
+{% block scripts %}
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+
+    // ── SweetAlert: Tampilkan pesan error dari server ──────────────────────
+    {% if error %}
+    Swal.fire({
+        icon: 'error',
+        title: 'Gagal Import!',
+        text: '{{ error|escapejs }}',
+        confirmButtonColor: '#dc3545',
+        confirmButtonText: 'Tutup'
+    });
+    {% endif %}
+
+    // ── SweetAlert: Tampilkan pesan sukses dari server ─────────────────────
+    {% if success_message %}
+    Swal.fire({
+        icon: 'success',
+        title: 'Berhasil!',
+        text: '{{ success_message|escapejs }}',
+        confirmButtonColor: '#0d6efd',
+        confirmButtonText: 'OK'
+    });
+    {% endif %}
+
+    // ── SweetAlert: Konfirmasi Hapus SEMUA Data ────────────────────────────
+    document.getElementById('btnHapusSemua').addEventListener('click', function () {
+        Swal.fire({
+            icon: 'warning',
+            title: 'Hapus Semua Data?',
+            text: 'Apakah Anda yakin ingin menghapus SEMUA data komoditas dan hasil analisis? Tindakan ini tidak dapat dibatalkan.',
+            showCancelButton: true,
+            confirmButtonColor: '#dc3545',
+            cancelButtonColor: '#6c757d',
+            confirmButtonText: '<i class="fas fa-trash-alt me-1"></i> Ya, Hapus Semua!',
+            cancelButtonText: 'Batal'
+        }).then(function (result) {
+            if (result.isConfirmed) {
+                if (typeof showGlobalLoader === 'function') showGlobalLoader('Menghapus Data...', 'Mohon tunggu sebentar.');
+                document.getElementById('formHapusSemua').submit();
+            }
+        });
+    });
+
+    // ── SweetAlert: Konfirmasi Hapus Per Komoditas ─────────────────────────
+    document.querySelectorAll('.btn-hapus-komoditas').forEach(function (btn) {
+        btn.addEventListener('click', function () {
+            const komoditas = this.dataset.komoditas;
+            const url = this.dataset.url;
+            Swal.fire({
+                icon: 'warning',
+                title: 'Hapus Komoditas?',
+                html: 'Hapus semua data komoditas <strong>' + komoditas + '</strong>?<br>Tindakan ini tidak dapat dibatalkan.',
+                showCancelButton: true,
+                confirmButtonColor: '#dc3545',
+                cancelButtonColor: '#6c757d',
+                confirmButtonText: '<i class="fas fa-trash me-1"></i> Ya, Hapus!',
+                cancelButtonText: 'Batal'
+            }).then(function (result) {
+                if (result.isConfirmed) {
+                    if (typeof showGlobalLoader === 'function') showGlobalLoader('Menghapus Data...', 'Mohon tunggu sebentar.');
+                    const form = document.getElementById('formHapusKomoditas');
+                    form.action = url;
+                    form.submit();
+                }
+            });
+        });
+    });
+
+});
+</script>
 {% endblock %}

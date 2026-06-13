@@ -14,4 +14,6 @@ urlpatterns = [
     
     path('proses-analisis/', views.proses_analisis_view, name='proses_analisis'),
     path('hasil-analisis/', views.hasil_analisis_view, name='hasil_analisis'),
+    path('hapus-semua-data/', views.hapus_semua_data_view, name='hapus_semua_data'),
+    path('hapus-komoditas/<str:nama_komoditas>/', views.hapus_komoditas_view, name='hapus_komoditas'),
 ]

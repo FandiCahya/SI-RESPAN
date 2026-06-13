@@ -9,6 +9,16 @@ from . import logic
 import json
 from django.utils import timezone
 from collections import defaultdict
+import numpy as np
+
+def safe_float(value, default=0):
+    try:
+        value = float(value)
+        if np.isnan(value) or np.isinf(value):
+            return default
+        return value
+    except:
+        return default
 
 @login_required
 def halaman_utama(request):
@@ -162,24 +172,30 @@ def proses_analisis_view(request):
             
             # Hitung statistik
             statistik_sampel = logic.hitung_statistik_sampel(sampel_df)
-            statistik_populasi = logic.hitung_statistik_populasi(komoditas)
 
             # Konversi sampel DataFrame ke JSON untuk disimpan
             hasil_srs_json = sampel_df.to_json(orient='records') if sampel_df is not None else None
 
             # Jalankan K-Means
             hasil_kmeans_json = logic.jalankan_kmeans(komoditas)
+            # Statistik Populasi (K-Means): dihitung dari 3 Sampel Representatif K-Means
+            statistik_kmeans = logic.hitung_statistik_kmeans(hasil_kmeans_json)
 
-            # Simpan semua hasil ke dalam model
-            # Kita bisa gunakan .create() sekarang karena tabel sudah pasti kosong
+            print("komoditas:", komoditas)
+            print("populasi (kmeans repr):", statistik_kmeans)
+            print("sampel (srs):", statistik_sampel)
+
             HasilAnalisis.objects.create(
                 nama_komoditas=komoditas,
                 klaster_json=hasil_kmeans_json,
                 srs_json=hasil_srs_json,
-                standar_deviasi_populasi=statistik_populasi['standar_deviasi'],
-                varians_populasi=statistik_populasi['varians'],
-                standar_deviasi_sampel=statistik_sampel['standar_deviasi'],
-                varians_sampel=statistik_sampel['varians'],
+                # Populasi (Data K-Means) = statistik dari 3 sampel representatif K-Means
+                standar_deviasi_populasi=safe_float(statistik_kmeans['standar_deviasi']),
+                varians_populasi=safe_float(statistik_kmeans['varians']),
+                standar_deviasi_sampel=safe_float(statistik_sampel['standar_deviasi']),
+                varians_sampel=safe_float(statistik_sampel['varians']),
+                standar_deviasi_kmeans=safe_float(statistik_kmeans['standar_deviasi']),
+                varians_kmeans=safe_float(statistik_kmeans['varians']),
             )
         
         return redirect('hasil_analisis')
@@ -207,12 +223,12 @@ def hasil_analisis_view(request):
             # Ambil satu sampel representatif untuk setiap klaster
             sampel_ditemukan = {}
             for item in hasil.data_klaster:
-                klaster_id = item.get('klaster')
-                if klaster_id not in sampel_ditemukan: # Ambil item pertama yang ditemukan untuk klaster tsb
+                if item.get('is_representative'):
+                    klaster_id = item.get('klaster')
                     sampel_ditemukan[klaster_id] = {
                         'pedagang': item.get('nama_pedagang', '-'),
-                        'harga': item.get('harga', 0)
-                    }
+                    'harga': item.get('harga', 0)
+                }
             
             # Urutkan sampel berdasarkan nomor klaster (1, 2, 3)
             for i in sorted(sampel_ditemukan.keys()):
@@ -273,10 +289,10 @@ def maps_view(request):
             # 3. Logika untuk memilih 3 sampel representatif (satu per klaster)
             sampel_ditemukan = {}
             for item in data_klaster_lengkap:
-                klaster_id = item.get('klaster')
-                # Ambil item pertama yang kita temukan untuk setiap klaster ID
-                if klaster_id is not None and klaster_id not in sampel_ditemukan:
-                    sampel_ditemukan[klaster_id] = item
+                if item.get('is_representative'):
+                    klaster_id = item.get('klaster')
+                    if klaster_id is not None:
+                        sampel_ditemukan[klaster_id] = item
             
             # 4. Buat GeoJSON feature HANYA dari 3 sampel yang sudah dipilih
             for klaster_id in sorted(sampel_ditemukan.keys()):
@@ -319,3 +335,28 @@ def maps_view(request):
         'daftar_komoditas': daftar_komoditas_unik
     }
     return render(request, 'analisis/maps.html', context)
+
+@login_required
+def hapus_semua_data_view(request):
+    user = request.user
+    if not (user.groups.filter(name='admin_data').exists() or user.is_superuser):
+        return HttpResponse("Hanya admin yang dapat melakukan aksi ini.", status=403)
+
+    if request.method == 'POST':
+        # Menghapus semua data yang diimpor dari excel dan hasil analisisnya
+        DataKomoditas.objects.all().delete()
+        HasilAnalisis.objects.all().delete()
+    
+    return redirect('clustering')
+
+@login_required
+def hapus_komoditas_view(request, nama_komoditas):
+    user = request.user
+    if not (user.groups.filter(name='admin_data').exists() or user.is_superuser):
+        return HttpResponse("Hanya admin yang dapat melakukan aksi ini.", status=403)
+
+    if request.method == 'POST':
+        DataKomoditas.objects.filter(nama_komoditas=nama_komoditas).delete()
+        HasilAnalisis.objects.filter(nama_komoditas=nama_komoditas).delete()
+
+    return redirect('clustering')

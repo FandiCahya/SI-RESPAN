@@ -26,6 +26,8 @@ class HasilAnalisis(models.Model):
     varians_populasi = models.FloatField(default=0)
     standar_deviasi_sampel = models.FloatField(default=0)
     varians_sampel = models.FloatField(default=0)
+    standar_deviasi_kmeans = models.FloatField(default=0)
+    varians_kmeans = models.FloatField(default=0)
 
     def __str__(self):
         return f"Hasil Analisis untuk {self.nama_komoditas}"
