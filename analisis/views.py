@@ -11,6 +11,10 @@ import json
 from django.utils import timezone
 from collections import defaultdict
 import numpy as np
+from django.contrib import messages
+import logging
+
+logger = logging.getLogger(__name__)
 
 def safe_float(value, default=0):
     try:
@@ -24,6 +28,10 @@ def safe_float(value, default=0):
 @login_required
 def halaman_utama(request):
     return render(request, 'analisis/halaman_utama.html')
+
+@login_required
+def profile_view(request):
+    return render(request, 'analisis/profile.html')
 
 @login_required
 def clustering_view(request):
@@ -151,8 +159,8 @@ def proses_analisis_view(request):
             # Hitung statistik
             statistik_sampel = logic.hitung_statistik_sampel(sampel_df)
 
-                # Konversi sampel DataFrame ke JSON untuk disimpan
-                hasil_srs_json = sampel_df.to_json(orient='records') if sampel_df is not None and not sampel_df.empty else None
+            # Konversi sampel DataFrame ke JSON untuk disimpan
+            hasil_srs_json = sampel_df.to_json(orient='records') if sampel_df is not None and not sampel_df.empty else None
 
             # Jalankan K-Means
             hasil_kmeans_json = logic.jalankan_kmeans(komoditas)
@@ -337,3 +345,15 @@ def hapus_komoditas_view(request, nama_komoditas):
         HasilAnalisis.objects.filter(nama_komoditas=nama_komoditas).delete()
 
     return redirect('clustering')
+
+# --- API VIEWS ---
+from django.views import View
+from django.http import JsonResponse
+
+class EnumeratorLoginView(View):
+    def post(self, request, *args, **kwargs):
+        return JsonResponse({"message": "API Login Not Implemented"})
+
+class AnalisisSampleMapView(View):
+    def get(self, request, *args, **kwargs):
+        return JsonResponse({"message": "API Market List Not Implemented"})
