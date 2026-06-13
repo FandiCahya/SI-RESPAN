@@ -1,108 +1,138 @@
-{% extends "base_public.html" %}
-{% load static %}
-
-{% block styles %}
-<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
-<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet" />
+{% extends "base_public.html" %} {% load static %} {% block styles %}
+<link
+  href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap"
+  rel="stylesheet"
+/>
+<link
+  href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200"
+  rel="stylesheet"
+/>
 <link rel="stylesheet" href="{% static 'css/login.css' %}?v=2" />
-{% endblock %}
-
-{% block content %}
+{% endblock %} {% block content %}
 <!-- Topbar -->
 <div class="login-topbar">
-    <div class="login-topbar-brand">SI-RESPAN</div>
-    <!-- Decorative square from design -->
-    <div style="width: 20px; height: 20px; background: #404947; border-radius: 4px; opacity: 0.2;"></div>
+  <div class="login-topbar-brand">SI-RESPAN</div>
+  <!-- Decorative square from design -->
+  <div
+    style="
+      width: 20px;
+      height: 20px;
+      background: #404947;
+      border-radius: 4px;
+      opacity: 0.2;
+    "
+  ></div>
 </div>
 
 <!-- Main Area -->
 <div class="login-main">
-    <div class="login-card">
-        
-        <div class="login-header">
-            <div class="login-logo-box">
-                <span class="material-symbols-outlined">eco</span>
-            </div>
-            <div class="login-title">SI-RESPAN</div>
-            <div class="login-subtitle">Selamat Datang Kembali</div>
-        </div>
-
-        <form method="post">
-            {% csrf_token %}
-            
-            <div class="login-form-group">
-                <label class="login-label" for="id_username">Username</label>
-                <div class="login-input-wrap">
-                    <span class="material-symbols-outlined login-input-icon">person</span>
-                    <!-- Menggunakan name="username" sesuai requirement form login bawaan Django -->
-                    <input type="text" name="username" id="id_username" class="login-input" placeholder="Masukkan username" required>
-                </div>
-            </div>
-
-            <div class="login-form-group">
-                <label class="login-label" for="id_password">Kata Sandi</label>
-                <div class="login-input-wrap">
-                    <span class="material-symbols-outlined login-input-icon">lock</span>
-                    <input type="password" name="password" id="id_password" class="login-input" placeholder="••••••••" required>
-                    <button type="button" class="login-password-toggle" id="togglePasswordBtn">
-                        <span class="material-symbols-outlined" id="togglePasswordIcon">visibility</span>
-                    </button>
-                </div>
-            </div>
-
-            <div class="login-actions">
-                <label class="login-remember">
-                    <input type="checkbox" class="login-checkbox">
-                    <span>Ingat Saya</span>
-                </label>
-                <!-- Href '#' karena fitur lupa sandi belum diimplementasi di views -->
-                <a href="#" class="login-forgot">Lupa Kata Sandi?</a>
-            </div>
-
-            <button type="submit" class="login-btn">
-                Masuk
-                <span class="material-symbols-outlined" style="font-size: 18px;">arrow_forward</span>
-            </button>
-            
-        </form>
+  <div class="login-card">
+    <div class="login-header">
+      <div class="login-logo-box">
+        <span class="material-symbols-outlined">eco</span>
+      </div>
+      <div class="login-title">SI-RESPAN</div>
+      <div class="login-subtitle">Selamat Datang Kembali</div>
     </div>
+
+    <form method="post">
+      {% csrf_token %}
+
+      <div class="login-form-group">
+        <label class="login-label" for="id_username">Username</label>
+        <div class="login-input-wrap">
+          <span class="material-symbols-outlined login-input-icon">person</span>
+          <!-- Menggunakan name="username" sesuai requirement form login bawaan Django -->
+          <input
+            type="text"
+            name="username"
+            id="id_username"
+            class="login-input"
+            placeholder="Masukkan username"
+            required
+          />
+        </div>
+      </div>
+
+      <div class="login-form-group">
+        <label class="login-label" for="id_password">Kata Sandi</label>
+        <div class="login-input-wrap">
+          <span class="material-symbols-outlined login-input-icon">lock</span>
+          <input
+            type="password"
+            name="password"
+            id="id_password"
+            class="login-input"
+            placeholder="••••••••"
+            required
+          />
+          <button
+            type="button"
+            class="login-password-toggle"
+            id="togglePasswordBtn"
+          >
+            <span class="material-symbols-outlined" id="togglePasswordIcon"
+              >visibility</span
+            >
+          </button>
+        </div>
+      </div>
+
+      <div class="login-actions">
+        <label class="login-remember">
+          <input type="checkbox" class="login-checkbox" />
+          <span>Ingat Saya</span>
+        </label>
+        <!-- Href '#' karena fitur lupa sandi belum diimplementasi di views -->
+        <a href="#" class="login-forgot">Lupa Kata Sandi?</a>
+      </div>
+
+      <button type="submit" class="login-btn">
+        Masuk
+        <span class="material-symbols-outlined" style="font-size: 18px"
+          >arrow_forward</span
+        >
+      </button>
+    </form>
+  </div>
 </div>
 
 <!-- Footer -->
 <div class="login-footer">
-    <div class="login-footer-title">SI-RESPAN</div>
-    <div class="login-footer-text">&copy; {% now "Y" %} Politeknik Negeri Malang. All rights reserved.</div>
+  <div class="login-footer-title">SI-RESPAN</div>
+  <div class="login-footer-text">
+    &copy; {% now "Y" %} Politeknik Negeri Malang. All rights reserved.
+  </div>
 </div>
-{% endblock %}
-
-{% block scripts %}
+{% endblock %} {% block scripts %}
 <script>
-    document.addEventListener('DOMContentLoaded', function () {
-        // ── SweetAlert: Login gagal ────────────────────────────────────────
-        {% if form.errors %}
-        Swal.fire({
-            icon: 'error',
-            title: 'Login Gagal!',
-            text: 'Username atau password Anda salah. Silakan coba lagi.',
-            confirmButtonColor: '#003631',
-            confirmButtonText: 'Coba Lagi'
-        });
-        {% endif %}
+  // Script Anda untuk toggle password tetap sama, tidak perlu diubah.
+  document.addEventListener('DOMContentLoaded', function () {
+      // ── SweetAlert: Login gagal ────────────────────────────────────────
+      {% if form.errors %}
+      Swal.fire({
+          icon: 'error',
+          title: 'Login Gagal!',
+          text: 'Username atau password Anda salah. Silakan coba lagi.',
+          confirmButtonColor: '#003631',
+          confirmButtonText: 'Coba Lagi'
+      });
+      {% endif %}
 
-        // ── Toggle show/hide password ──────────────────────────────────────
-        const togglePasswordBtn = document.querySelector('#togglePasswordBtn');
-        const togglePasswordIcon = document.querySelector('#togglePasswordIcon');
-        const passwordInput = document.querySelector('#id_password');
+      // ── Toggle show/hide password ──────────────────────────────────────
+      const togglePasswordBtn = document.querySelector('#togglePasswordBtn');
+      const togglePasswordIcon = document.querySelector('#togglePasswordIcon');
+      const passwordInput = document.querySelector('#id_password');
 
-        togglePasswordBtn.addEventListener('click', function () {
-            if (passwordInput.type === 'password') {
-                passwordInput.type = 'text';
-                togglePasswordIcon.textContent = 'visibility_off';
-            } else {
-                passwordInput.type = 'password';
-                togglePasswordIcon.textContent = 'visibility';
-            }
-        });
-    });
+      togglePasswordBtn.addEventListener('click', function () {
+          if (passwordInput.type === 'password') {
+              passwordInput.type = 'text';
+              togglePasswordIcon.textContent = 'visibility_off';
+          } else {
+              passwordInput.type = 'password';
+              togglePasswordIcon.textContent = 'visibility';
+          }
+      });
+  });
 </script>
 {% endblock %}

@@ -25,7 +25,7 @@ SECRET_KEY = 'django-insecure-kt662x-vi#j$dvea$%dnjuf4)4$n)him*sgh1w*=1*1&&2arq0
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['192.168.1.8', 'localhost', '127.0.0.1']
+ALLOWED_HOSTS = ['127.0.0.1', 'localhost', '192.168.1.8']
 
 
 # Application definition
@@ -39,6 +39,9 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     
     'analisis',
+    
+    'rest_framework',
+    'rest_framework.authtoken',
 ]
 
 MIDDLEWARE = [
@@ -92,7 +95,7 @@ DATABASES = {
         'NAME': 'analisis',         # Nama database yang Anda buat
         'USER': 'root',                 # User database Anda (default XAMPP/Laragon)
         'PASSWORD': '',                 # Password database Anda (kosongkan jika tidak ada)
-        'HOST': '127.0.0.1',            # Atau 'localhost'
+        'HOST': 'localhost',            # Atau 'localhost'
         'PORT': '3306',                 # Port default MySQL
         'OPTIONS': {
             'init_command': "SET sql_mode='STRICT_TRANS_TABLES'",
@@ -161,3 +164,33 @@ STATIC_URL = 'static/'
 STATICFILES_DIRS = [
     BASE_DIR / 'static',
 ]
+
+# Testing
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+
+# # Production
+# EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+# EMAIL_HOST = 'smtp.gmail.com'
+# EMAIL_PORT = 587
+# EMAIL_USE_TLS = True
+# EMAIL_HOST_USER = 'emailanda@gmail.com'  # <-- Ganti dengan email Anda
+# EMAIL_HOST_PASSWORD = 'host anda'
+
+# tutor untuk dapat host password
+# 1. Aktifkan Verifikasi 2 Langkah di Akun Google Anda.
+# 2. Buka halaman Sandi Aplikasi.
+# 3. Buat sandi baru untuk aplikasi (beri nama "Django Project" atau semacamnya).
+# 4. Google akan memberi Anda 16 karakter password. Salin password ini.
+# 5. Gunakan password 16 karakter tersebut di settings.py Anda untuk EMAIL_HOST_PASSWORD.
+
+
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        # Kita akan menggunakan TokenAuthentication untuk mobile app
+        'rest_framework.authentication.TokenAuthentication',
+    ],
+    'DEFAULT_PERMISSION_CLASSES': [
+        # Secara default, semua endpoint butuh login
+        'rest_framework.permissions.IsAuthenticated',
+    ],
+}
